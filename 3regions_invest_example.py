@@ -384,10 +384,9 @@ def get_transmission_capacities(file_name, losses, data_path=''):
     return trm_data
 
 
-if __name__ == "__main__":
-
+def run_3regions_example():
     # define number of periods to be computed
-    periods = 8760
+    periods = 720
 
     es = initialize_energysystem(periods=periods)
 
@@ -410,9 +409,10 @@ if __name__ == "__main__":
     costs = get_cost_data('cost_parameters.csv', data_path=data_path)
     efficiencies = get_efficiency_parameters('efficiency_parameters.csv',
                                              data_path)
-    trm_data = get_transmission_capacities('3regions_transmission_capacities.csv',
-                                           losses,
-                                           data_path=data_path)
+    trm_data = get_transmission_capacities(
+        '3regions_transmission_capacities.csv',
+        losses,
+        data_path=data_path)
 
     # create model objects: buses
     buses = create_buses(['electricity'] + list(resource_costs.keys()),
@@ -438,3 +438,7 @@ if __name__ == "__main__":
     om.solve(solver='gurobi',
              solve_kwargs={'tee': True},
              cmdline_options={'method': 2})
+
+
+if __name__ == "__main__":
+    run_3regions_example()
