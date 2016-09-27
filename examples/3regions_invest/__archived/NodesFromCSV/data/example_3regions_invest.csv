@@ -7,7 +7,7 @@ class,label,source,target,conversion_factors,nominal_value,min,max,summed_min,ac
 ,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
 ### GLOBAL RESOURCES,,,,,,,,,,,,,,,,,,,,
-Source,GL_resource_uranium,GL_resource_uranium,GL_bus_uranium,,,,,,,,4.98,,,,,,,,,
+Source,GL_resource_uranium,GL_resource_uranium,GL_bus_uranium,,0.00000001,,,,,,4.98,,,,,,,,,
 Source,GL_resource_coal,GL_resource_coal,GL_bus_coal,,,,,,,,13.24,,,,,,,,,
 Source,GL_resource_gas,GL_resource_gas,GL_bus_gas,,,,,,,,39.93,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,
