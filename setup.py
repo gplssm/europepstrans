@@ -9,6 +9,6 @@ setup(
     author='Guido Pleßmann',
     author_email='guido.plessmann@rl-institut.de',
     description='European power sector long-term investment model',
-    requires=['pandas >= 0.18.1',
+    install_requires=['pandas >= 0.18.1',
               'matplotlib']
 )
