@@ -11,7 +11,9 @@ import pandas as pd
 import os
 from oemof.solph import (Sink, Source, LinearTransformer, Bus, Flow,
                          OperationalModel, EnergySystem, GROUPINGS,
-                         NodesFromCSV, Investment)
+                         NodesFromCSV, Investment, Storage)
+from europepstrans.results import TimeFrameResults
+from europepstrans.results.plot import plots
 
 
 def initialize_energysystem(periods=8760):
@@ -284,7 +286,6 @@ def create_transmission(buses, trm_data, costs):
     None
     """
     for it, row in trm_data.iterrows():
-        pass
         LinearTransformer(
             label=row['name'],
             inputs={buses[row['from_region']]['electricity']: Flow()},
@@ -295,6 +296,47 @@ def create_transmission(buses, trm_data, costs):
             conversion_factors={buses[row['to_region']]['electricity']: 1 - row['losses']}
         )
 
+
+def create_storages(buses, parameter, technologies, costs, regions=None):
+    """
+    Create storage technology objects
+
+    Parameters
+    ----------
+    buses
+    parameter
+    technologies
+    costs
+
+    Returns
+    -------
+    None
+    """
+
+    if regions == None:
+        regions = [x for x in list(buses.keys()) if x is not 'global']
+
+    for region in regions:
+        for tech in technologies:
+
+            # create storage transformer object for storage
+            Storage(
+                label='_'.join([tech, region]),
+                inputs={buses[region]['electricity']: Flow(
+                    variable_costs=costs.loc[tech, 'opex_var'])},
+                outputs={buses[region]['electricity']: Flow(
+                    variable_costs=costs.loc[tech, 'opex_var'])},
+                capacity_loss=parameter.loc[tech, 'capacity_loss'],
+                initial_capacity=0,
+                nominal_input_capacity_ratio=1 / parameter.loc[
+                    tech, 'energy_power_ratio_in'],
+                nominal_output_capacity_ratio=(1 / parameter.loc[
+                    tech, 'energy_power_ratio_out']),
+                inflow_conversion_factor=parameter.loc[tech, 'efficiency_in'],
+                outflow_conversion_factor=parameter.loc[tech, 'efficiency_out'],
+                investment=Investment(ep_costs=costs.loc[tech, 'epc'] +
+                                               costs.loc[tech, 'opex_fix']),
+            )
 
 def epc(capex, wacc, lifetime):
     """
@@ -380,6 +422,31 @@ def get_efficiency_parameters(file_name, data_path=''):
 
     return efficiencies
 
+def get_storage_parameter(file_name, data_path=''):
+    """
+    Read storage parameters from file
+
+    Parameters
+    ----------
+    file_name : str
+        Name of storage parameter file
+
+    Returns
+    -------
+    storage_parameter : DataFrame
+        Efficiency parameters for technologies
+    """
+
+    # read efficiency parameters file
+    storage_parameter = pd.read_csv(
+        os.path.abspath(
+            os.path.join(os.path.dirname(__file__),
+                         data_path,
+                         file_name)),
+            index_col='technology')
+
+    return storage_parameter
+
 
 def get_transmission_capacities(file_name, losses, data_path=''):
     """
@@ -424,6 +491,9 @@ def run_3regions_example():
                          'ocgt': 'natural_gas',
                          'coal': 'coal',
                          'nuclear': 'uranium'}
+
+    storage_technologies = ['battery', 'phs']
+
     losses = 0.01
 
     data_path = 'data'
@@ -435,6 +505,9 @@ def run_3regions_example():
     costs = get_cost_data('cost_parameters.csv', data_path=data_path)
     efficiencies = get_efficiency_parameters('efficiency_parameters.csv',
                                              data_path)
+    storage_parameter = get_storage_parameter('storage_parameter.csv',
+                                              data_path=data_path)
+
     trm_data = get_transmission_capacities(
         '3regions_transmission_capacities.csv',
         losses,
@@ -455,6 +528,7 @@ def run_3regions_example():
     create_demands(buses, data)
 
     # create storage objects
+    create_storages(buses, storage_parameter, storage_technologies, costs)
 
     # create grid objects
     create_transmission(buses, trm_data, costs)

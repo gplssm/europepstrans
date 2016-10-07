@@ -4,7 +4,7 @@ applied here. Most relevant difference is results data stored in self.data
 
 """
 
-from oemof.outputlib import DataFramePlot
+from oemof.outputlib import DataFramePlot, ResultsDataFrame
 
 import pickle
 from matplotlib import pyplot as plt
@@ -33,7 +33,8 @@ class TimeFrameResults:
         self.ax = kwargs.get('ax')
 
         if results_file is None:
-            self.data = DataFramePlot(energy_system=kwargs.get('energy_system'))
+            # self.data = DataFramePlot(energy_system=kwargs.get('energy_system'))
+            self.data = ResultsDataFrame(energy_system=kwargs.get('energy_system'))
         else:
             self.data = pickle.load(open(results_file, 'rb'))
 
