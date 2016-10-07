@@ -29,7 +29,7 @@ class TimeFrameResults:
         """
 
         results_file = kwargs.get('results_file', None)
-        subset = kwargs.get('subset', None)
+        self.subset = kwargs.get('subset', None)
         self.ax = kwargs.get('ax')
 
         if results_file is None:

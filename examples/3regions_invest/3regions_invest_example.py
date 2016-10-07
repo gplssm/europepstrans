@@ -12,6 +12,7 @@ import os
 from oemof.solph import (Sink, Source, LinearTransformer, Bus, Flow,
                          OperationalModel, EnergySystem, GROUPINGS,
                          NodesFromCSV, Investment, Storage)
+from oemof.outputlib import ResultsDataFrame
 from europepstrans.results import TimeFrameResults
 from europepstrans.results.plot import plots
 
@@ -539,10 +540,16 @@ def run_3regions_example():
              solve_kwargs={'tee': True},
              cmdline_options={'method': 2})
 
-    es.dump(dpath=os.path.join(os.path.expanduser('~'),
+    # es.dump(dpath=os.path.join(os.path.expanduser('~'),
+    #                             '.europepstrans',
+    #                             'results'),
+    #          filename='result_df.pkl')
+    import pickle
+    pickle.dump(ResultsDataFrame(energy_system=es),
+                open(os.path.join(os.path.expanduser('~'),
                                 '.europepstrans',
-                                'results'),
-             filename='result_df.pkl')
+                                'results',
+                                "result_df.pkl"), "wb" ))
 
 
 if __name__ == "__main__":

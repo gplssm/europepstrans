@@ -9,12 +9,12 @@ def three_regions_results():
     dpath = os.path.join(os.path.expanduser('~'), '.europepstrans', 'results')
     results_file = 'result_df.pkl'
 
-    es = EnergySystem()
-
-    es.restore(dpath=dpath, filename=results_file)
-
-
-    results = TimeFrameResults(energy_system=es)
+    # es = EnergySystem()
+    #
+    # es.restore(dpath=dpath, filename=results_file)
+    #
+    # results = TimeFrameResults(energy_system=es)
+    results = TimeFrameResults(results_file=os.path.join(dpath, results_file))
 
     plots(results)
 
