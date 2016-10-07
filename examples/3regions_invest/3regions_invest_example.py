@@ -8,15 +8,10 @@ Analyzed time range: from now until 2050
 """
 
 import pandas as pd
-# import sys
-# sys.path.remove('/home/guido/rli_home/git-repos/oemof.db')
+import os
 from oemof.solph import (Sink, Source, LinearTransformer, Bus, Flow,
                          OperationalModel, EnergySystem, GROUPINGS,
                          NodesFromCSV, Investment)
-from oemof import outputlib
-import os
-from matplotlib import pyplot as plt
-import re
 
 
 def initialize_energysystem(periods=8760):
@@ -415,73 +410,6 @@ def get_transmission_capacities(file_name, losses, data_path=''):
 
     return trm_data
 
-
-def plotting(energysystem):
-    """
-
-    Parameters
-    ----------
-    energysystem
-
-    Returns
-    -------
-
-    """
-    cdict = {'wind': '#5b5bae',
-             'solar': '#ffde32',
-             'hydro': '#42c77a',
-             'ccgt': '#636f6b',
-             'demand': '#ce4aff',
-             'excess': '#555555'}
-
-    # re search string for interaction with electricity bus
-    regex = re.compile('^electricity\w*')
-
-    # Plotting the input flows of the electricity bus for January
-    results = outputlib.DataFramePlot(energy_system=energysystem)
-    # results = outputlib.ResultsDataFrame(energy_system=energysystem)
-    import pickle
-    pickle.dump(results, open('result_df.pkl', 'wb'))
-
-    # get electricity buses to be aggregated
-    el_buses = [regex.findall(x) for x in
-                myplot.index.get_level_values('bus_label').unique()]
-
-    el_buses = [x[0] for x in el_buses if x != []]
-
-    el_plot = myplot.loc[el_buses].sum(level=['type','obj_label', 'datetime'])
-
-    # get DataFrame without transmission lines
-    el_no_trm = el_plot[~el_plot.index.get_level_values('obj_label').str.contains('-')]
-
-    # TODO: continue here!
-    # line below replaces *_deu by 'asd'
-    # TODO: make that only _<region> for all rows is replaced by '' in order to aggregate afterwards according to technology
-    el_no_trm.reset_index(['obj_label']).replace(
-        {'obj_label': {'\w*_deu': 'asd'}}, regex=True)
-
-    myplot.slice_unstacked(bus_label="electricity_deu", type="to_bus",
-                           date_from="2012-01-01 00:00:00",
-                           date_to="2012-01-31 00:00:00")
-
-    handles, labels = myplot.io_plot(
-        bus_label='electricity_deu', cdict=cdict)
-    #     barorder=['pv', 'wind', 'pp_gas', 'storage'],
-    #     lineorder=['demand', 'storage', 'excess_bel'],
-    #     line_kwa={'linewidth': 4},
-    #     ax=fig.add_subplot(1, 1, 1),
-    #     date_from="2012-06-01 00:00:00",
-    #     date_to="2012-06-8 00:00:00",
-    # )
-    myplot.ax.set_ylabel('Power in MW')
-    myplot.ax.set_xlabel('Date')
-    myplot.ax.set_title("Electricity bus")
-    myplot.set_datetime_ticks(tick_distance=24, date_format='%d-%m-%Y')
-    # myplot.outside_legend(handles=handles, labels=labels)
-
-    plt.show()
-
-
 def run_3regions_example():
     # define number of periods to be computed
     periods = 744
@@ -537,7 +465,10 @@ def run_3regions_example():
              solve_kwargs={'tee': True},
              cmdline_options={'method': 2})
 
-    plotting(es)
+    es.dump(dpath=os.path.join(os.path.expanduser('~'),
+                                '.europepstrans',
+                                'results'),
+             filename='result_df.pkl')
 
 
 if __name__ == "__main__":
