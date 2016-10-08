@@ -47,7 +47,7 @@ def get_timeseries_data(data_path):
     demand_data_file = '3regions_demand_data.csv'
     wind_feedin_file = '3regions_wind_data.csv'
     solar_feedin_file = '3regions_solar_data.csv'
-    hydro_feedin_file = '3regions_wind_data.csv'
+    hydro_feedin_file = '3regions_hydro_data.csv'
 
     # obtain an wrangle demand data
     # demand = pd.read_csv(os.path.join(data_path,demand_data_file))
