@@ -4,7 +4,7 @@
 An 18-regions Europe power system long-term investment model constraint by
 current political decision on climate change mitigation targets.
 
-Analyzed time range: from now until 2050
+Analyzed time range: snapshot least-cost planning for 2040
 """
 
 import pandas as pd
@@ -571,9 +571,9 @@ def run_3regions_example():
 
     es = initialize_energysystem(periods=periods)
 
-    resource_costs = {'natural_gas': 0.03,
-                      'coal': 0.01,
-                      'uranium': 0.2}
+    resource_costs = {'natural_gas': 0.0282,
+                      'coal': 0.0088,
+                      'uranium': 0.0078}
     res_technologies = ['wind', 'solar', 'hydro']
     conv_technologies = {'ccgt': 'natural_gas',
                          'ocgt': 'natural_gas',
@@ -582,7 +582,7 @@ def run_3regions_example():
 
     storage_technologies = ['battery', 'phs']
 
-    losses = 0.01
+    losses = 0.016
 
     data_path = 'data'
 

@@ -1,4 +1,4 @@
 technology,energy_power_ratio_in,energy_power_ratio_out,efficiency_in,efficiency_out,capacity_loss
-battery,6.5,6.5,0.8944,0.8944,0
+battery,6,6,0.8944,0.8944,0
 phs,8,8,0.85,0.85,0
 gas,1,1,1,1,0
