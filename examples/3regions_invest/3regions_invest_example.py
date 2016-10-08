@@ -304,10 +304,14 @@ def create_storages(buses, parameter, technologies, costs, regions=None):
 
     Parameters
     ----------
-    buses
-    parameter
-    technologies
-    costs
+    buses : dict
+        Container for bus objects
+    parameter : DataFrame
+        Parameter to model storages
+    technologies: dict
+        Power plant technologies as key and according fuel as value
+    costs : DataFrame
+        Cost data of various technologies
 
     Returns
     -------
