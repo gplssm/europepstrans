@@ -343,6 +343,89 @@ def create_storages(buses, parameter, technologies, costs, regions=None):
                                                costs.loc[tech, 'opex_fix']),
             )
 
+def create_ptg_objects(buses, efficiencies, storage_parameter, costs,
+                       regions=None):
+    """
+    Create objects decribing Power-to-Gas system
+
+    Power-to-Gas (PtG) system consists of
+      * Electrolysis and methanation unit aggregated in one component
+      * SNG (synthetic natural gas) bus
+      * Gas storage connected to SNG bus
+      * Transformer with eta=1 from SNG to natural_gas bus
+
+    Parameters
+    ----------
+    buses : dict
+        Container for bus objects
+    efficiencies : DataFrame
+        Efficiency parameters of conventional technologies and PtG
+    storage_parameter: DataFrame
+        Parameter to model storages
+    costs : DataFrame
+        Cost data of various technologies
+    regions : list, optional
+        Regions RES technologies objects will be created.
+
+    Returns
+    -------
+    buses : dict
+        Container for bus objects extended by SNG bus
+    """
+    tech = 'ptg'
+    bus = 'sng'
+    storage = 'gas'
+
+    if regions == None:
+        regions = [x for x in list(buses.keys()) if x is not 'global']
+
+    for region in regions:
+        # add sng bus to buses container
+        buses[region][bus] = Bus(label='_'.join([bus, region]))
+
+        # add ptg transformer form electricity to sng
+        LinearTransformer(
+            label='_'.join([tech, region]),
+            inputs={buses[region]['electricity']: Flow()},
+            outputs={buses[region][bus]: Flow(
+                variable_costs=costs.loc[tech, 'opex_var'],
+                investment=Investment(ep_costs=costs.loc[tech, 'epc'] +
+                                               costs.loc[tech, 'opex_fix'])
+            )},
+            conversion_factors={
+                buses[region][bus]:
+                    efficiencies.loc[tech]['conversion_factor']}
+        )
+
+        # add ideal transformer from sng to natural_gas
+        LinearTransformer(
+            label='_'.join(['sng2natural_gas', region]),
+            inputs={buses[region][bus]: Flow()},
+            outputs={buses[region]['natural_gas']: Flow(
+                investment=Investment(ep_costs=0))},
+            conversion_factors={
+                buses[region]['natural_gas']: 1}
+        )
+
+        # add gas storage at sng bus
+        Storage(
+            label='_'.join([storage, region]),
+            inputs={buses[region][bus]: Flow(
+                variable_costs=costs.loc[storage, 'opex_var'])},
+            outputs={buses[region][bus]: Flow(
+                variable_costs=costs.loc[storage, 'opex_var'])},
+            capacity_loss=storage_parameter.loc[storage, 'capacity_loss'],
+            initial_capacity=0,
+            nominal_input_capacity_ratio=1 / storage_parameter.loc[
+                storage, 'energy_power_ratio_in'],
+            nominal_output_capacity_ratio=(1 / storage_parameter.loc[
+                storage, 'energy_power_ratio_out']),
+            inflow_conversion_factor=storage_parameter.loc[storage, 'efficiency_in'],
+            outflow_conversion_factor=storage_parameter.loc[storage, 'efficiency_out'],
+            investment=Investment(ep_costs=costs.loc[storage, 'epc'] +
+                                           costs.loc[storage, 'opex_fix']),
+        )
+
 def epc(capex, wacc, lifetime):
     """
     Equivalent periodical costs (if periode is one year: equivalent annual
@@ -534,6 +617,7 @@ def run_3regions_example():
 
     # create storage objects
     create_storages(buses, storage_parameter, storage_technologies, costs)
+    create_ptg_objects(buses, efficiencies, storage_parameter, costs)
 
     # create grid objects
     create_transmission(buses, trm_data, costs)

@@ -50,7 +50,7 @@ def stacked_bar_line_graph(results):
                   'solar',
                   'phs',
                   'battery'],
-        lineorder=['demand', 'battery', 'phs', 'excess_electricity'],
+        lineorder=['demand', 'battery', 'phs', 'ptg','excess_electricity'],
         line_kwa={'linewidth': 4},
         ax=fig.add_subplot(1, 1, 1),
         date_from="2012-01-01 00:00:00",
