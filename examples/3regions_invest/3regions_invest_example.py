@@ -626,6 +626,12 @@ def run_3regions_example():
 
     om = OperationalModel(es)
 
+
+    om.write(os.path.join(os.path.expanduser('~'),
+                                '.europepstrans',
+                                'lp_files',
+                                "3regions.lp"),
+             io_options={'symbolic_solver_labels': True})
     om.solve(solver='gurobi',
              solve_kwargs={'tee': True},
              cmdline_options={'method': 2})
