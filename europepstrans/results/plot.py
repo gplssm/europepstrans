@@ -3,12 +3,8 @@ import os
 
 
 def plots(results):
-    stacked_bar_line_graph(results)
 
-
-def stacked_bar_line_graph(results):
-    group_list = ['bus_label', 'obj_label', 'type', 'datetime']
-
+    # define colors
     cdict = {'wind': '#6495ED'.upper(),
              'solar': '#ffde32'.upper(),
              'storage': '#42c77a'.upper(),
@@ -19,6 +15,25 @@ def stacked_bar_line_graph(results):
              'hydro': '#191970'.upper(),
              'demand': '#ce4aff'.upper(),
              'excess_electricity': '#555555'.upper()}
+
+    barorder = ['nuclear_pp',
+                  'ccgt_pp',
+                  'coal_pp',
+                  'ocgt_pp',
+                  'hydro',
+                  'wind',
+                  'solar',
+                  'phs',
+                  'battery']
+
+    stacked_bar_line_graph(results, cdict, barorder)
+
+    generation_sums(results, cdict, barorder)
+
+
+def stacked_bar_line_graph(results, cdict, barorder):
+    group_list = ['bus_label', 'obj_label', 'type', 'datetime']
+
 
     wo_transmission = results.data[
         ~results.data.index.get_level_values('obj_label').str.contains('-')]
@@ -42,15 +57,7 @@ def stacked_bar_line_graph(results):
     handles, labels = results.io_plot(
         bus_label='electricity',
         cdict=cdict,
-        barorder=['nuclear_pp',
-                  'ccgt_pp',
-                  'coal_pp',
-                  'ocgt_pp',
-                  'hydro',
-                  'wind',
-                  'solar',
-                  'phs',
-                  'battery'],
+        barorder=barorder,
         lineorder=['demand', 'battery', 'phs', 'ptg','excess_electricity'],
         line_kwa={'linewidth': 4},
         ax=fig.add_subplot(1, 1, 1),
@@ -67,3 +74,13 @@ def stacked_bar_line_graph(results):
                                 '.europepstrans',
                                 'figures',
                                 "3regions_stacked_io.png"))
+
+
+def generation_sums(results, cdict, barorder):
+    results.data.sum(level='obj_label').loc[barorder].plot(kind='bar', stacked=True)
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(os.path.expanduser('~'),
+                                '.europepstrans',
+                                'figures',
+                                "3regions_generation.png"))
