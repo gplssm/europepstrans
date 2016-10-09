@@ -1,5 +1,6 @@
 technology,conversion_factor
-ccgt,0.58
-ocgt,0.38
-coal,0.35
-nuclear,0.33
+ccgt,0.615
+ocgt,0.395
+coal,0.461
+nuclear,0.34
+ptg,0.55

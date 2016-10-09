@@ -1,4 +1,4 @@
-,name_set,from_region,to_region,length,name,capacity
-203,elesplan-m_31,xbnl,deu,363.914,xbnl-deu,4830000.0
-205,elesplan-m_31,xfra,deu,765.858,xfra-deu,3200000.0
-207,elesplan-m_31,xfra,xbnl,581.757,xfra-xbnl,3400000.0
+name_set,from_region,to_region,length,name,capacity
+elesplan-m_31,xbnl,deu,363.914,xbnl-deu,4830000
+elesplan-m_31,xfra,deu,765.858,xfra-deu,3200000
+elesplan-m_31,xfra,xbnl,581.757,xfra-xbnl,3400000
