@@ -198,8 +198,9 @@ def create_res_feeders(buses, costs, data, technologies, regions=None):
                        actual_value=data.loc[region][tech],
                        variable_costs=costs.loc[tech, 'opex_var'],
                        investment=Investment(ep_costs=costs.loc[tech, 'epc'] +
-                                                  costs.loc[tech, 'opex_fix']))})
-
+                                                      costs.loc[
+                                                          tech, 'opex_fix']),
+                   fixed=True)})
 
 def create_transformers(buses, costs, efficiencies, technologies, regions=None):
     """
