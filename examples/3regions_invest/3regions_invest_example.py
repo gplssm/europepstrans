@@ -16,6 +16,7 @@ from oemof.solph import (Sink, Source, LinearTransformer, Bus, Flow,
 from oemof.outputlib import ResultsDataFrame
 from europepstrans.results import TimeFrameResults
 from europepstrans.results.plot import plots
+from europepstrans.model.constraints import emission_cap
 
 
 def initialize_energysystem(periods=8760):
@@ -80,6 +81,7 @@ def get_timeseries_data(data_path):
             os.path.join(os.path.dirname(__file__),
                          data_path,
                          solar_feedin_file)))
+
     solar_feedin.columns = [x.split('_')[0] for x in solar_feedin.columns]
     solar_feedin = solar_feedin.unstack()
     solar_feedin.index.names = ['region', 'timestep']
@@ -585,6 +587,7 @@ def run_3regions_example():
     storage_technologies = ['battery', 'phs']
 
     losses = 0.016
+    co2_cap = 54797831000
 
     data_path = 'data'
 
@@ -626,12 +629,15 @@ def run_3regions_example():
 
     om = OperationalModel(es)
 
+    om = emission_cap(om, es._groups, periods, co2_cap)
+
 
     om.write(os.path.join(os.path.expanduser('~'),
                                 '.europepstrans',
                                 'lp_files',
                                 "3regions.lp"),
              io_options={'symbolic_solver_labels': True})
+
     om.solve(solver='gurobi',
              solve_kwargs={'tee': True},
              cmdline_options={'method': 2})
@@ -644,4 +650,5 @@ def run_3regions_example():
 
 
 if __name__ == "__main__":
+
     run_3regions_example()
