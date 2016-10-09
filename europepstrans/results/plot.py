@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import os
 
 
 def plots(results):
@@ -62,4 +63,7 @@ def stacked_bar_line_graph(results):
     results.set_datetime_ticks(tick_distance=168, date_format='%d-%m-%Y')
     results.outside_legend(handles=handles, labels=labels)
 
-    plt.show()
+    plt.savefig(os.path.join(os.path.expanduser('~'),
+                                '.europepstrans',
+                                'figures',
+                                "3regions_stacked_io.png"))
