@@ -9,6 +9,7 @@ Analyzed time range: snapshot least-cost planning for 2040
 
 import pandas as pd
 import os
+import pickle
 from oemof.solph import (Sink, Source, LinearTransformer, Bus, Flow,
                          OperationalModel, EnergySystem, GROUPINGS,
                          NodesFromCSV, Investment, Storage)
@@ -628,11 +629,6 @@ def run_3regions_example():
              solve_kwargs={'tee': True},
              cmdline_options={'method': 2})
 
-    # es.dump(dpath=os.path.join(os.path.expanduser('~'),
-    #                             '.europepstrans',
-    #                             'results'),
-    #          filename='result_df.pkl')
-    import pickle
     pickle.dump(ResultsDataFrame(energy_system=es),
                 open(os.path.join(os.path.expanduser('~'),
                                 '.europepstrans',
