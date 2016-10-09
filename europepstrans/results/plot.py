@@ -14,7 +14,12 @@ def plots(results):
              'nuclear_pp': '#CD6889'.upper(),
              'hydro': '#191970'.upper(),
              'demand': '#ce4aff'.upper(),
-             'excess_electricity': '#555555'.upper()}
+             'excess_electricity': '#555555'.upper(),
+             'battery': '#FF8C00',
+             'ptg': '#C0FF3E',
+             'phs': '#C76114',
+             'gas': '#808000',
+             'trm': '#708090'}
 
     barorder = ['nuclear_pp',
                   'ccgt_pp',
