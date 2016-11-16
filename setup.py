@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name='europepstrans',
-    version='0.0.1-pre',
-    packages=[''],
+    version='0.0.1pre',
+    packages=['europepstrans'],
     url='',
     license='GPL v3',
     author='Guido Pleßmann',
