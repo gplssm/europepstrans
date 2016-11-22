@@ -2,6 +2,7 @@ language: python
 python:
   - 3.4
 #  - pypy
+install: "pip3 install -r rtd_requirements.txt"
 addons:
   sonarqube: true
 env:
